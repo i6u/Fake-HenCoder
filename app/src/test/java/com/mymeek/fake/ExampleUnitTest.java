@@ -1,4 +1,4 @@
-package com.mymeek.fake_hencoder;
+package com.mymeek.fake;
 
 import org.junit.Test;
 
