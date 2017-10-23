@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private PagerAdapter pagerAdapter;
     private int pageModelsSize;
 
+    FragmentManager fm = getSupportFragmentManager();
+
     {
         mItems = Arrays.asList("PracticeDraw1", "PracticeDraw2", "PracticeDraw3", "PracticeDraw4", "PracticeDraw5", "PracticeDraw6", "PracticeDraw7");
     }
@@ -45,8 +48,10 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                practiceDrawChapter(i);
-                pagerAdapter.notifyDataSetChanged();
+                Log.d("onItemSelected...", "onItemSelected: "+i+"/"+l);
+                pagerAdapter = new PagerAdapter(getSupportFragmentManager(), practiceDrawChapter(0));
+                pager.setAdapter(pagerAdapter);
+                //pagerAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -54,11 +59,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
         pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), practiceDrawChapter(0));
+        pagerAdapter = new PagerAdapter(fm, practiceDrawChapter(0));
         pager.setAdapter(pagerAdapter);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(pager);
+
+
+
+
     }
 
     private List<PageModel> practiceDrawChapter(int chapter) {
@@ -133,6 +144,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return getString(pages.get(position).titleRes);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            // 最简单解决 notifyDataSetChanged() 页面不刷新问题的方法
+            return POSITION_NONE;
         }
     }
 
